@@ -3,12 +3,15 @@
 #include "Font.h"
 #include "Input.h"
 
-TwinStickShooterApp::TwinStickShooterApp() {
 
+TwinStickShooterApp::TwinStickShooterApp() {
+	playerTexture = new aie::Texture("./textures/car.png");
+	player = new Player(playerTexture);
 }
 
 TwinStickShooterApp::~TwinStickShooterApp() {
-
+	delete playerTexture;
+	delete player;
 }
 
 bool TwinStickShooterApp::startup() {
@@ -18,6 +21,7 @@ bool TwinStickShooterApp::startup() {
 	// TODO: remember to change this when redistributing a build!
 	// the following path would be used instead: "./font/consolas.ttf"
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
+	
 
 	return true;
 }
@@ -36,10 +40,11 @@ void TwinStickShooterApp::update(float deltaTime) {
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
+	player->update(deltaTime);
 }
 
 void TwinStickShooterApp::draw() {
-
+	
 	// wipe the screen to the background colour
 	clearScreen();
 
@@ -47,7 +52,8 @@ void TwinStickShooterApp::draw() {
 	m_2dRenderer->begin();
 
 	// draw your stuff here!
-	
+	m_2dRenderer->drawLine(1, 1, 50, 50);
+	player->draw(m_2dRenderer);
 	// output some text, uses the last used colour
 	m_2dRenderer->drawText(m_font, "Press ESC to quit", 0, 0);
 

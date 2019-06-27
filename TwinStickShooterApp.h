@@ -2,6 +2,7 @@
 
 #include "Application.h"
 #include "Renderer2D.h"
+#include "Player.h"
 
 class TwinStickShooterApp : public aie::Application {
 public:
@@ -17,6 +18,8 @@ public:
 
 protected:
 
+	aie::Texture* playerTexture;
 	aie::Renderer2D*	m_2dRenderer;
 	aie::Font*			m_font;
+	Player* player;
 };
