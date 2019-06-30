@@ -2,25 +2,31 @@
 #include "Texture.h"
 #include "Font.h"
 #include "Input.h"
+#include "Bullet.h"
+
 
 
 TwinStickShooterApp::TwinStickShooterApp() {
-	playerTexture = new aie::Texture("./textures/car.png");
-	player = new Player(playerTexture);
+	//playerTexture = new aie::Texture("./textures/car.png");
+	
+	
 }
 
 TwinStickShooterApp::~TwinStickShooterApp() {
-	delete playerTexture;
+	//delete playerTexture;
 	delete player;
 }
 
 bool TwinStickShooterApp::startup() {
 	
 	m_2dRenderer = new aie::Renderer2D();
+	player = new Player();
+	
 
 	// TODO: remember to change this when redistributing a build!
 	// the following path would be used instead: "./font/consolas.ttf"
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
+	
 	
 
 	return true;
@@ -30,6 +36,7 @@ void TwinStickShooterApp::shutdown() {
 
 	delete m_font;
 	delete m_2dRenderer;
+	//delete Texture;
 }
 
 void TwinStickShooterApp::update(float deltaTime) {
@@ -54,6 +61,7 @@ void TwinStickShooterApp::draw() {
 	// draw your stuff here!
 	m_2dRenderer->drawLine(1, 1, 50, 50);
 	player->draw(m_2dRenderer);
+
 	// output some text, uses the last used colour
 	m_2dRenderer->drawText(m_font, "Press ESC to quit", 0, 0);
 
