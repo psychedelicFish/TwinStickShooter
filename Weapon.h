@@ -12,8 +12,7 @@ protected:
 
 public:
 	Weapon(float x, float y, float rotation);
-	std::list<Bullet*> bulletList;
-	void Fire(float deltaTime);
+	std::shared_ptr<Bullet> Fire(float deltaTime);
 	void update(float deltaTime, float x, float y, float rotation);
 	float GetFireRate();
 };

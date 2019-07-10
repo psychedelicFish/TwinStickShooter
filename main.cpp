@@ -6,7 +6,7 @@ int main() {
 	auto app = new TwinStickShooterApp();
 
 	// initialise and loop
-	app->run("AIE", 1920, 1080, false);
+	app->run("AIE", 720, 720, false);
 
 	// deallocation
 	delete app;

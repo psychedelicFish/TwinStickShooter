@@ -12,19 +12,20 @@ Weapon::Weapon(float x, float y, float rotation)
 	Rotation = ((rotation* M_PI) / 180);
 }
 
-void Weapon::Fire(float deltaTime)
+std::shared_ptr<Bullet> Weapon::Fire(float deltaTime)
 {
-	bulletList.push_back(new Bullet(10, pos.x, pos.y, Rotation, 3.f));
+	std::shared_ptr<Bullet> bullet (new Bullet(10, pos.x, pos.y, Rotation, 3.f));
+	return bullet;
 }
 void Weapon::update(float deltaTime, float x, float y, float rotation)
 {
 	Rotation = ((rotation* M_PI) / 180);
 	pos.x = x + cos(Rotation) * 23;
 	pos.y = y + sin(Rotation) * 23;
-	for (Bullet* bullet : bulletList)
-	{
-		bullet->update(deltaTime);
-	}
+	//for (Bullet* bullet : bulletList)
+	//{
+		//bullet->update(deltaTime);
+	//}
 }
 float Weapon::GetFireRate()
 {

@@ -2,8 +2,12 @@
 
 #include "Application.h"
 #include "Renderer2D.h"
-#include "Player.h"
+#include "Map.h"
+#include <list>
+class Player;
+class Enemy;
 class Bullet;
+class Weapon;
 class TwinStickShooterApp : public aie::Application {
 public:
 
@@ -21,7 +25,11 @@ protected:
 	//aie::Texture* playerTexture;
 	aie::Renderer2D*	m_2dRenderer;
 	aie::Font*			m_font;
-	Player* player;
-	Bullet* bullet = nullptr;
+	std::shared_ptr <Player> player;
+	Enemy* enemy;
+	Weapon* m_weapon;
+	std::list<std::shared_ptr<Bullet>> bulletList;
+	Mape* map;
 	aie::Texture* Texture;
+	float timer = 10.0f;
 };
