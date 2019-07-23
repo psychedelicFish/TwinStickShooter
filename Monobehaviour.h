@@ -10,16 +10,16 @@ protected:
 	aie::Texture* texture;
 	float sizeX;
 	float sizeY;
-	int frameX;
-	int frameY;
+	float frameX;
+	float frameY;
 	
 	
 public:
-	Monobehaviour(const char* FileName, int X, int Y);
+	Monobehaviour(glm::vec2 pos, char* FileName, int X, int Y, glm::vec2 size);
 	~Monobehaviour();
 	glm::vec2 getPosition();
 	
-	bool collision(Monobehaviour* other);
+	bool collision(std::shared_ptr<Monobehaviour> other);
 	virtual void update(float deltaTime);
 	virtual void draw(aie::Renderer2D* renderer);
 	float getX();

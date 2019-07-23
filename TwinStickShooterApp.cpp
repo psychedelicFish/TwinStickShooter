@@ -7,6 +7,7 @@
 #include "Map.h"
 #include "Player.h"
 #include "Weapon.h"
+#include "Obstacle.h"
 
 
 
@@ -21,20 +22,33 @@ TwinStickShooterApp::~TwinStickShooterApp() {
 }
 
 bool TwinStickShooterApp::startup() {
-	
+
 	m_2dRenderer = new aie::Renderer2D();
-	enemy = new Enemy();
-	player.reset(new Player(enemy));
-	map = new Mape();
-	m_weapon = player->weapon; 
+
+	player.reset(new Player());
+	map = new Map();
+	m_weapon = player->weapon;
 	
+	std::shared_ptr<Obstacle> obstacle(new Obstacle({ 300,300 }));
+	std::shared_ptr<Obstacle> obstacle1(new Obstacle({450, 300}));
+	std::shared_ptr<Obstacle> obstacle2(new Obstacle({ 150, 300 }));
+	
+	obstacleList.push_back(obstacle);
+	obstacleList.push_back(obstacle1);
+	obstacleList.push_back(obstacle2);
+
+	std::shared_ptr<Enemy> enemy(new Enemy({ 300, 400 }));
+	std::shared_ptr<Enemy> enemy1(new Enemy({ 450, 400 }));
+	std::shared_ptr<Enemy> enemy2(new Enemy({ 150, 400 }));
+
+	enemyList.push_back(enemy);
+	enemyList.push_back(enemy1);
+	enemyList.push_back(enemy2);
 
 	// TODO: remember to change this when redistributing a build!
 	// the following path would be used instead: "./font/consolas.ttf"
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
 	
-	
-
 	return true;
 }
 
@@ -45,13 +59,14 @@ void TwinStickShooterApp::shutdown() {
 	//delete Texture;
 }
 
-void TwinStickShooterApp::update(float deltaTime) {
+void TwinStickShooterApp::update(float deltaTime)
+{
 
 	// input example
 	aie::Input* input = aie::Input::getInstance();
 
 	// exit the application
-	if (input->isKeyDown(aie::INPUT_KEY_SPACE))
+	if (input->isMouseButtonDown(aie::INPUT_MOUSE_BUTTON_LEFT))
 	{
 		timer += deltaTime;
 		if (timer > m_weapon->GetFireRate())
@@ -64,18 +79,46 @@ void TwinStickShooterApp::update(float deltaTime) {
 	}
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
-	if (!(bulletList.empty())) {
-		for (auto it = bulletList.begin(); it != bulletList.end(); it++)
+	
+	if (!(bulletList.empty()))
+	{
+		for (auto it = bulletList.begin(); it != bulletList.end() || bulletList.empty(); it++)
 		{
-			(*it)->update(deltaTime);
-			if ((*it)->collision(enemy)) {
-				bulletList.erase(it);
-				break;
+			(*it)->update(deltaTime); // updates the bullet
+		}
+		for (auto enemy = enemyList.begin(); enemy != enemyList.end(); enemy++) // loops through the enemies
+		{
+			for (auto bullet = bulletList.begin(); bullet != bulletList.end(); bullet++)
+			{ //loops through the bullets for each enemie
+
+				if ((*bullet)->collision((*enemy)))
+				{ //if a bullet collides with enemy
+
+					auto bulletcopy = bullet; // make a copy of the bullet
+					bullet++;// increase iterator
+					bulletList.erase(bulletcopy); // erase the bullet that collided from the list 
+
+					auto enemycopy = enemy;
+					enemy++;
+					enemyList.erase(enemycopy);
+					if (enemy == enemyList.end())
+					{
+						goto breakEnemyList;
+					}
+					if (bullet == bulletList.end()) { // make sure that we havent increased beyond the last
+						break; // if we have break the loop.
+					}
+				}
 			}
 		}
 	}
+breakEnemyList:
+	
 	player->update(deltaTime);
-	enemy->update(deltaTime, player->getPosition());
+	
+	for (std::shared_ptr<Enemy> enemy : enemyList) {
+		enemy->update(deltaTime, player->getPosition(), obstacleList);
+	}
 	
 }
 
@@ -90,8 +133,13 @@ void TwinStickShooterApp::draw() {
 	// draw your stuff here!
 	
 	map->draw(m_2dRenderer);
-	enemy->draw(m_2dRenderer);
+	for (std::shared_ptr<Enemy> enemy : enemyList) {
+		enemy->draw(m_2dRenderer);
+	}
 	player->draw(m_2dRenderer);
+	for (std::shared_ptr<Obstacle> obstacle : obstacleList) {
+		obstacle->draw(m_2dRenderer);
+	}
 	for (std::shared_ptr<Bullet> bullet : bulletList)
 	{
 		bullet->draw(m_2dRenderer);

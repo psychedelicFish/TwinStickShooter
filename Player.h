@@ -1,6 +1,7 @@
 #pragma once
 #include "Monobehaviour.h"
 #include <Texture.h>
+#include <list>
 class Enemy;
 class Weapon;
 class Player : public Monobehaviour
@@ -9,18 +10,18 @@ class Player : public Monobehaviour
 	glm::vec2 velocity;
 	glm::vec2 mousePosition;
 	float speed;
-	int rotation;
+	float rotation;
 	//aie::Texture* playerTexture;
 	aie::Texture* lightOverlay;
 	
 	
 public:
-	Player(Enemy* enemy);
+	Player();
 	~Player();
 	void update(float deltaTime) override;
 	void draw(aie::Renderer2D* renderer) override;
 	//bool collision(Monobehaviour& other) override;
 	glm::vec2 spriteSize;
 	Weapon* weapon = nullptr;
-	Enemy* m_enemy = nullptr;
+	//std::list<std::shared_ptr<Monobehaviour>> m_enemy;
 };

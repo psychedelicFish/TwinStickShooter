@@ -1,11 +1,11 @@
 #pragma once
 #include <Renderer2D.h>
 #include <Texture.h>
-class Mape
+class Map
 {
 private:
 	aie::Texture* texture;
 public:
-	Mape();
+	Map();
 	void draw(aie::Renderer2D* renderer);
 };

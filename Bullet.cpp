@@ -2,11 +2,10 @@
 #include <math.h>
 
 
-Bullet ::Bullet(float velocity, float x, float y, float angle, float life) 
-: Monobehaviour("../bin/textures/bullets_colored_edit.png",1,1)
+Bullet ::Bullet(float velocity, glm::vec2 pos, float angle, float life) 
+	: Monobehaviour(pos, "../bin/textures/bullets_colored_edit.png", 1, 1, glm::vec2{ 9,9 })
 {
-	position.x = x;
-	position.y = y;
+	
 	Velocity = velocity;
 	Angle = angle;
 	bulletLife = life;

@@ -1,17 +1,18 @@
 #include "Monobehaviour.h"
 #include <iostream>
 
-Monobehaviour::Monobehaviour(const char* FileName, int X, int Y) {
+Monobehaviour::Monobehaviour(glm::vec2 pos, char* FileName, int X, int Y, glm::vec2 size) {
 	texture = new aie::Texture(FileName);
-	sizeX = (texture->getWidth() / X) * 30;
-	sizeY = (texture->getHeight() / Y) * 30;
+	sizeX = size.x;
+	sizeY = size.y;
 	frameX = X;
 	frameY = Y;
+	position = pos;
 }
 Monobehaviour::~Monobehaviour() {
 	delete texture;
 }
-bool Monobehaviour:: collision(Monobehaviour* other) {
+bool Monobehaviour:: collision(std::shared_ptr<Monobehaviour> other) {
 	return position.x < other->position.x + other->sizeX &&		// Check left
 		position.x  > other->position.x - other->sizeX &&				// Check right
 		position.y < other->position.y + other->sizeY &&				// Check top
@@ -21,7 +22,9 @@ void Monobehaviour::die() {
 	std::cout << "dead" << std::endl;
 }
 void Monobehaviour:: update(float deltaTime) {}
-void Monobehaviour:: draw(aie::Renderer2D* renderer) {}
+void Monobehaviour:: draw(aie::Renderer2D* renderer) {
+	renderer->drawSprite(texture, position.x, position.y, sizeX, sizeY);
+}
 glm::vec2 Monobehaviour::getPosition(){ return position; }
 float Monobehaviour::getX() { return position.x; }
 float Monobehaviour::getY() { return position.y; }

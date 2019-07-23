@@ -8,6 +8,7 @@ class Player;
 class Enemy;
 class Bullet;
 class Weapon;
+class Obstacle;
 class TwinStickShooterApp : public aie::Application {
 public:
 
@@ -26,10 +27,14 @@ protected:
 	aie::Renderer2D*	m_2dRenderer;
 	aie::Font*			m_font;
 	std::shared_ptr <Player> player;
-	Enemy* enemy;
+	
 	Weapon* m_weapon;
+	
 	std::list<std::shared_ptr<Bullet>> bulletList;
-	Mape* map;
+	std::list < std::shared_ptr<Obstacle> >obstacleList;
+	std::list<std::shared_ptr<Enemy>> enemyList;
+
+	Map* map;
 	aie::Texture* Texture;
 	float timer = 10.0f;
 };
