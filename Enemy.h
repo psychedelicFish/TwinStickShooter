@@ -14,11 +14,12 @@ protected:
 	float animationTime = 0.055f;
 
 	float rotationAngle = 0.f;
-	glm::vec2 playerPosition;
+
 	glm::vec2 rotationVec;
 
 	glm::vec2 ahead;
 	glm::vec2 ahead2;
+	glm::vec2 avoidance = { 0,0 };
 
 	float velocity;
 	float responseTime = 0.055f;
@@ -26,12 +27,11 @@ protected:
 	
 public:
 	Enemy(glm::vec2 pos);
+	bool Active;
 	//~Enemy();
-
-	std::shared_ptr<Obstacle> mostThreatening(const ObstacleList& obstacleList);
-	bool willCollide(glm::vec2 ahead, glm::vec2 ahead2, std::shared_ptr<Obstacle> obstacle);
-	glm::vec2 collisionAvoidance(const ObstacleList& obstacleList);
-	
 	void update(float deltaTime, glm::vec2 PlayerPosition, const ObstacleList& obstacleList);
 	void draw(aie::Renderer2D* renderer) override;
+	void handleCollisionObstacle(const std::shared_ptr<Obstacle> obstacle, float deltaTime);
+	void setPosition(float x, float y);
+	void Attack(std::shared_ptr<Player> player);
 };

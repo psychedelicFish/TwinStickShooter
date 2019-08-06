@@ -4,6 +4,7 @@
 #include <list>
 class Enemy;
 class Weapon;
+class Obstacle;
 class Player : public Monobehaviour
 {
 	aie::Renderer2D* m_2dRenderer;
@@ -11,17 +12,21 @@ class Player : public Monobehaviour
 	glm::vec2 mousePosition;
 	float speed;
 	float rotation;
+	int health;
 	//aie::Texture* playerTexture;
 	aie::Texture* lightOverlay;
+	
 	
 	
 public:
 	Player();
 	~Player();
-	void update(float deltaTime) override;
-	void draw(aie::Renderer2D* renderer) override;
+	void Update(float deltaTime,std::list<std::shared_ptr<Enemy>>& e, std::list<std::shared_ptr<Obstacle>>& o);
+	void draw(aie::Renderer2D* renderer);
+	void TakeDamage(int dmg);
 	//bool collision(Monobehaviour& other) override;
 	glm::vec2 spriteSize;
 	Weapon* weapon = nullptr;
+	bool Alive;
 	//std::list<std::shared_ptr<Monobehaviour>> m_enemy;
 };

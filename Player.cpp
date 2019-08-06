@@ -5,6 +5,7 @@
 #include <math.h>
 #include "Weapon.h"
 #include "Enemy.h"
+#include "Obstacle.h"
 #include <glm/glm.hpp>
 
 
@@ -21,13 +22,15 @@ Player::Player() : Monobehaviour({ 100, 100 },"../bin/textures/Player_stand.png"
 	float width = texture->getWidth();
 	float height = texture->getHeight();
 	spriteSize = { width, height };
+	health = 100;
+	Alive = true;
 }
 Player::~Player()
 {
 	//delete playerTexture;
 }
 
-void Player::update(float deltaTime)
+void Player::Update(float deltaTime, std::list<std::shared_ptr<Enemy>>& e, std::list<std::shared_ptr<Obstacle>>& o)
 {
 	aie::Input* input = aie::Input::getInstance();
 	//mousePosition = input->getMouseXY;
@@ -43,22 +46,6 @@ void Player::update(float deltaTime)
 		rotation = glm::radians(360.f) - rotation;
 	}
 
-	//if (input->isKeyDown(aie::INPUT_KEY_LEFT))
-	//{
-		//rotation++;
-		//if (rotation > 360)
-		//{
-			//rotation = 0;
-		//}
-	//}
-	//if (input->isKeyDown(aie::INPUT_KEY_RIGHT))
-	
-		//rotation--;
-		//if (rotation < -360)
-		//{
-			//rotation = 0;
-		//}
-	//}
 	if (input->isKeyDown(aie::INPUT_KEY_A)) // Left
 	{
 		velocity.x = -speed;
@@ -83,8 +70,15 @@ void Player::update(float deltaTime)
 	else {
 		velocity.y = 0.0f;
 	}
-	position.x += velocity.x * deltaTime;//Update X powsition
+	position.x += velocity.x * deltaTime;//Update X position
 	position.y += velocity.y * deltaTime;//Update Y position
+
+	for (std::shared_ptr<Obstacle> obstacle : o) {
+		if (collision(obstacle)) {
+			position.x -= velocity.x * deltaTime;//Update X position
+			position.y -= velocity.y * deltaTime;//Update Y position
+		}
+	}
 
 	weapon->update(deltaTime, position.x, position.y, rotation);
 	
@@ -98,6 +92,13 @@ void Player::update(float deltaTime)
 
 		//renderer->drawCircle(position.x, position.y, 10);
 		//renderer->drawLine(position.x, position.y, position.x + 20, position.y + 20);
+
+	}
+	void Player::TakeDamage(int dmg) {
+		health -= dmg;
+		if (health <= 0) {
+			Alive = false;
+		}
 
 	}
 
