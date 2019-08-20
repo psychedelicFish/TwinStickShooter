@@ -3,7 +3,7 @@
 
 
 Bullet ::Bullet(float velocity, glm::vec2 pos, float angle, float life) 
-	: Monobehaviour(pos, "../bin/textures/bullets_colored_edit.png", 1, 1, glm::vec2{ 9,9 })
+	: Monobehaviour(pos, "./bin/textures/bullets_colored_edit.png", 1, 1, glm::vec2{ 9,9 })
 {
 	Active = false;
 	Velocity = velocity;

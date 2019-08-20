@@ -6,7 +6,7 @@
 Button::Button(const char* Text, float x, float y, float width, float height) {
 
 	strcpy_s(buttonText, 64, Text);
-	font = new aie::Font("../bin/fonts/consolas.ttf", 24);
+	font = new aie::Font("./bin/fonts/consolas.ttf", 24);
 
 	posX = x;
 	posY = y;

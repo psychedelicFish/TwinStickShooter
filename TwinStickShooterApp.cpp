@@ -31,14 +31,16 @@ bool TwinStickShooterApp::startup() {
 	m_2dRenderer = new aie::Renderer2D();
 	newgame.reset(new Button("New Game", 720.f/2, 720.0f*.5, 120.f, 50.f));
 	ExitGame.reset(new Button("Exit Game", 720.f / 2, 720.f *.5 - 100, 120.f, 50.f));
-	fontControls = new aie::Font("../bin/fonts/consolas.ttf", 24);
-	titleFont = new aie::Font("../bin/fonts/consolas_bold.ttf", 60);
-	menuLight = new aie::Texture("../bin/textures/MenuLight.png");
-	menuGreen = new aie::Texture("../bin/textures/MenuGreen.png");
+	fontControls = new aie::Font("./bin/fonts/consolas.ttf", 24);
+	titleFont = new aie::Font("./bin/fonts/consolas_bold.ttf", 60);
+	menuLight = new aie::Texture("./bin/textures/MenuLight.png");
+	menuGreen = new aie::Texture("./bin/textures/MenuGreen.png");
+	No.reset(new Button("No", BoxPosX / 1.5f, BoxPosY - 2.5*50.f, 120.f, 50.f));
+	Yes.reset(new Button("Yes", BoxPosX*1.25, BoxPosY - 2.5*50.f, 120.f, 50.f));
 	// TODO: remember to change this when redistributing a build!
 	// the following path would be used instead: "./font/consolas.ttf"
 	//m_font = new aie::Font("../bin/font/consolas.ttf", 32);
-	
+
 	return true;
 }
 
@@ -67,6 +69,7 @@ void TwinStickShooterApp::draw() {
 	clearScreen();
 	// begin drawing sprites
 	m_2dRenderer->begin();
+	
 	// draw your stuff here!
 	
 	if (GameState == &TwinStickShooterApp::MainMenu) {
@@ -133,10 +136,12 @@ void TwinStickShooterApp::draw() {
 		m_2dRenderer->setRenderColour(0.0f, 0.0f, 0.0f, 0.0f);
 		m_2dRenderer->drawBox(BoxPosX, BoxPosY, BoxSizeX, BoxSizeY);
 		m_2dRenderer->setRenderColour(1.0f, 1.0f, 1.0f, 1.0f);
+		
 		float textWidth = fontControls->getStringWidth("Mwuh ha ha, You have fallen,");
 		float textHeight = fontControls->getStringHeight("Mwuh ha ha, You have fallen,");
 		float centredPosX = BoxPosX - (textWidth * 0.5f) + 2;
 		float centredPosY = BoxPosY - (textHeight * 0.5f) + 5;
+		
 		m_2dRenderer->drawText(fontControls, "Mwuh ha ha, You have fallen,", centredPosX, centredPosY);
 		m_2dRenderer->drawText(fontControls, "to the DARK!!", centredPosX, centredPosY - textHeight);
 		m_2dRenderer->drawText(fontControls, "Alone you lay", centredPosX, centredPosY - textHeight * 2);
@@ -235,7 +240,7 @@ void TwinStickShooterApp::PlayGame(float deltaTime) {
 		for (auto enemy = enemyList.begin(); enemy != enemyList.end(); enemy++) // loops through the enemies
 		{
 			for (auto bullet = bulletList.begin(); bullet != bulletList.end(); bullet++)
-			{ //loops through the bullets for each enemie
+			{ //loops through the bullets for each enemies
 
 				if ((*bullet)->collision((*enemy)))
 				{ //if a bullet collides with enemy
@@ -261,8 +266,11 @@ void TwinStickShooterApp::PlayGame(float deltaTime) {
 		}
 	}
 breakEnemyList:
-
-	player->Update(deltaTime, enemyList, obstacleList);
+	float x = 0.f;
+	float y = 0.f;
+	m_2dRenderer->setCameraPos(player->getX() - 720 / 2, player->getY() - 720 / 2);
+	m_2dRenderer->getCameraPos(x, y);
+	player->Update(deltaTime, enemyList, obstacleList, x, y);
 
 	for (std::shared_ptr<Enemy> enemy : enemyList) {
 		enemy->update(deltaTime, player->getPosition(), obstacleList);
@@ -274,7 +282,8 @@ breakEnemyList:
 		}
 	}
 
-
+	
+	std::cout << "Camera X: " << x << "Camera Y: " << y << std::endl;
 }
 #pragma endregion
 
@@ -283,7 +292,7 @@ void TwinStickShooterApp::StartGame(float deltaTime){
 	menuLightPosX = input->getMouseX();
 	menuLightPosY = input->getMouseY();
 	if (CreatedAssets == false) {
-		maxEnemies = 10;
+		maxEnemies = 0;
 		enemiesInScene = 0;
 		//Create the player
 		player.reset(new Player());
@@ -300,8 +309,7 @@ void TwinStickShooterApp::StartGame(float deltaTime){
 		obstacleList.push_back(obstacle);
 		obstacleList.push_back(obstacle1);
 		obstacleList.push_back(obstacle2);
-		//Create the enemies - Too be changed to an enemy pooler
-		//std::shared_ptr<Enemy> enemy(new Enemy({ 1000, 1000 }));
+
 		enemyPool.reset(new EnemyObjectPool(maxEnemies));
 		bulletPool.reset(new BulletObjectPool(100));
 		CreatedAssets = true;
@@ -313,11 +321,10 @@ void TwinStickShooterApp::StartGame(float deltaTime){
 
 void TwinStickShooterApp::GameOver(float deltaTime) {
 	
-	No.reset(new Button("No", BoxPosX / 1.5f, BoxPosY - 2.5*50.f, 120.f, 50.f));
-	Yes.reset(new Button("Yes", BoxPosX*1.25, BoxPosY - 2.5*50.f, 120.f, 50.f));
 	aie::Input* input = aie::Input::getInstance();
 	menuLightPosX = input->getMouseX();
 	menuLightPosY = input->getMouseY();
+	
 	if (Yes->Update()) {
 		GameState = &TwinStickShooterApp::Exit;
 	}

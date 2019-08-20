@@ -10,7 +10,7 @@
 
 
 
-Player::Player() : Monobehaviour({ 100, 100 },"../bin/textures/Player_stand.png", 1, 1, glm::vec2{ 1,1 })
+Player::Player() : Monobehaviour({ 720/2, 720/2 },"./bin/textures/Player_stand.png", 1, 1, glm::vec2{ 1,1 })
 {
 	speed = 200.0f;
 	velocity = { 0,0 };
@@ -18,7 +18,7 @@ Player::Player() : Monobehaviour({ 100, 100 },"../bin/textures/Player_stand.png"
 	weapon = new Weapon(position.x, position.y, rotation);
 	//m_enemy = enemy;
 	//playerTexture = new aie::Texture("../bin/textures/Player_stand.png");
-	lightOverlay = new aie::Texture("../bin/textures/CharacterLight.png");
+	lightOverlay = new aie::Texture("./bin/textures/CharacterLight.png");
 	float width = texture->getWidth();
 	float height = texture->getHeight();
 	spriteSize = { width, height };
@@ -30,21 +30,12 @@ Player::~Player()
 	//delete playerTexture;
 }
 
-void Player::Update(float deltaTime, std::list<std::shared_ptr<Enemy>>& e, std::list<std::shared_ptr<Obstacle>>& o)
+void Player::Update(float deltaTime, std::list<std::shared_ptr<Enemy>>& e, std::list<std::shared_ptr<Obstacle>>& o, float x, float y)
 {
 	aie::Input* input = aie::Input::getInstance();
 	//mousePosition = input->getMouseXY;
 	//PlayerMovement
 	
-	glm::vec2 mousePos = { input->getMouseX(), input->getMouseY() };
-	glm::vec2 rotationVec = mousePos - position;
-
-	rotationVec = glm::normalize(rotationVec);
-	rotation = acos(rotationVec.x);
-	
-	if (rotationVec.y < 0) {
-		rotation = glm::radians(360.f) - rotation;
-	}
 
 	if (input->isKeyDown(aie::INPUT_KEY_A)) // Left
 	{
@@ -72,7 +63,22 @@ void Player::Update(float deltaTime, std::list<std::shared_ptr<Enemy>>& e, std::
 	}
 	position.x += velocity.x * deltaTime;//Update X position
 	position.y += velocity.y * deltaTime;//Update Y position
+	//m_2dRenderer->getCameraPos(cameraX, cameraY);
+	glm::vec2 mousePos = { input->getMouseX(), input->getMouseY()};
+	
+	
+	
+	glm::vec2 CameraPos = { x, y };
+	
+	glm::vec2 rotationVec = (mousePos + CameraPos) - position;
+	rotationVec = glm::normalize(rotationVec);
+	//std::cout << rotationVec.x << "," << rotationVec.y << std::endl;
+	rotation = acos(rotationVec.x);
 
+	if (rotationVec.y < 0) {
+		rotation = glm::radians(360.f) - rotation;
+	}
+	
 	for (std::shared_ptr<Obstacle> obstacle : o) {
 		if (collision(obstacle)) {
 			position.x -= velocity.x * deltaTime;//Update X position

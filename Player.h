@@ -15,13 +15,14 @@ class Player : public Monobehaviour
 	int health;
 	//aie::Texture* playerTexture;
 	aie::Texture* lightOverlay;
-	
+	float cameraX;
+	float cameraY;
 	
 	
 public:
 	Player();
 	~Player();
-	void Update(float deltaTime,std::list<std::shared_ptr<Enemy>>& e, std::list<std::shared_ptr<Obstacle>>& o);
+	void Update(float deltaTime,std::list<std::shared_ptr<Enemy>>& e, std::list<std::shared_ptr<Obstacle>>& o, float x, float y);
 	void draw(aie::Renderer2D* renderer);
 	void TakeDamage(int dmg);
 	//bool collision(Monobehaviour& other) override;

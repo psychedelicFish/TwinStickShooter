@@ -13,7 +13,7 @@
 
 
 using ObstacleList = std::list<std::shared_ptr<Obstacle>>;
-Enemy::Enemy(glm::vec2 pos) : Monobehaviour(pos,"../bin/textures/Insect.png", 8, 1, glm::vec2{ 30,30 })
+Enemy::Enemy(glm::vec2 pos) : Monobehaviour(pos,"./bin/textures/Insect.png", 8, 1, glm::vec2{ 30,30 })
 {
 	velocity = 50.0f;
 	Active = false;
