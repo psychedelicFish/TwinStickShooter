@@ -15,14 +15,13 @@ Player::Player() : Monobehaviour({ 720/2, 720/2 },"./bin/textures/Player_stand.p
 	speed = 200.0f;
 	velocity = { 0,0 };
 	rotation = 0.0f;
-	weapon = new Weapon(position.x, position.y, rotation);
-	//m_enemy = enemy;
-	//playerTexture = new aie::Texture("../bin/textures/Player_stand.png");
+	weapon.reset(new Weapon(position.x, position.y, rotation));
 	lightOverlay = new aie::Texture("./bin/textures/CharacterLight.png");
 	float width = texture->getWidth();
 	float height = texture->getHeight();
 	spriteSize = { width, height };
-	health = 100;
+	MaxHealth = 100;
+	currentHealth = MaxHealth;
 	Alive = true;
 }
 Player::~Player()
@@ -33,9 +32,6 @@ Player::~Player()
 void Player::Update(float deltaTime, std::list<std::shared_ptr<Enemy>>& e, std::list<std::shared_ptr<Obstacle>>& o, float x, float y)
 {
 	aie::Input* input = aie::Input::getInstance();
-	//mousePosition = input->getMouseXY;
-	//PlayerMovement
-	
 
 	if (input->isKeyDown(aie::INPUT_KEY_A)) // Left
 	{
@@ -63,7 +59,7 @@ void Player::Update(float deltaTime, std::list<std::shared_ptr<Enemy>>& e, std::
 	}
 	position.x += velocity.x * deltaTime;//Update X position
 	position.y += velocity.y * deltaTime;//Update Y position
-	//m_2dRenderer->getCameraPos(cameraX, cameraY);
+
 	glm::vec2 mousePos = { input->getMouseX(), input->getMouseY()};
 	
 	
@@ -72,7 +68,6 @@ void Player::Update(float deltaTime, std::list<std::shared_ptr<Enemy>>& e, std::
 	
 	glm::vec2 rotationVec = (mousePos + CameraPos) - position;
 	rotationVec = glm::normalize(rotationVec);
-	//std::cout << rotationVec.x << "," << rotationVec.y << std::endl;
 	rotation = acos(rotationVec.x);
 
 	if (rotationVec.y < 0) {
@@ -91,21 +86,22 @@ void Player::Update(float deltaTime, std::list<std::shared_ptr<Enemy>>& e, std::
 }
 
 	void Player::draw(aie::Renderer2D* renderer) {
-		//int width = DownTexture->getWidth() / 5;
-		//renderer->setRenderColour(1, 1, 0, 1);
 		renderer->drawSprite(lightOverlay, position.x, position.y, 0, 0, rotation);
 		renderer->drawSprite(texture, position.x, position.y, 0, 0, rotation);
-
-		//renderer->drawCircle(position.x, position.y, 10);
-		//renderer->drawLine(position.x, position.y, position.x + 20, position.y + 20);
-
 	}
 	void Player::TakeDamage(int dmg) {
-		health -= dmg;
-		if (health <= 0) {
+		assert(dmg >= 0);
+		currentHealth -= dmg;
+		if (currentHealth <= 0) {
 			Alive = false;
 		}
 
+	}
+	int Player::GetMaxHealth() {
+		return MaxHealth;
+	}
+	int Player::getCurrentHealth() {
+		return currentHealth;
 	}
 
 

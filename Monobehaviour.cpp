@@ -9,8 +9,14 @@ Monobehaviour::Monobehaviour(glm::vec2 pos, char* FileName, int X, int Y, glm::v
 	frameY = Y;
 	position = pos;
 }
+Monobehaviour::Monobehaviour(glm::vec2 pos, int X, int Y, glm::vec2 size) {
+	sizeX = size.x;
+	sizeY = size.y;
+	frameX = X;
+	frameY = Y;
+	position = pos;
+}
 Monobehaviour::~Monobehaviour() {
-	delete texture;
 }
 bool Monobehaviour:: collision(std::shared_ptr<Monobehaviour> other) {
 	return position.x < other->position.x + other->sizeX &&		// Check left

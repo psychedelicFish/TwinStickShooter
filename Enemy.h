@@ -8,30 +8,27 @@ using ObstacleList = std::list<std::shared_ptr<Obstacle>>;
 class Enemy : public Monobehaviour
 {
 protected:
-	aie::Texture* EnemyTexture;
-	float timer = 0.0f;
+	aie::Texture* EnemyTexture; //Enemies Texture
+	//Animation stuff
+	float timer = 0.0f; 
 	int animationFrame = 0;
 	float animationTime = 0.055f;
 
+	//Angle of rotation
 	float rotationAngle = 0.f;
 
-	glm::vec2 rotationVec;
+	float velocity;//speed at which the enemy moves
 
-	glm::vec2 ahead;
-	glm::vec2 ahead2;
-	glm::vec2 avoidance = { 0,0 };
-
-	float velocity;
-	float responseTime = 0.055f;
-	float responseTimer = 0.0f;
+	float attackTime; //How long till the enemy attacks
+	float attackTimer; //Timer based off of deltaTime
 	
 public:
-	Enemy(glm::vec2 pos);
-	bool Active;
+	Enemy(glm::vec2 pos, aie::Texture* texture); //constructer
+	bool Active; //Is the enemy active in the scene
 	//~Enemy();
-	void update(float deltaTime, glm::vec2 PlayerPosition, const ObstacleList& obstacleList);
+	void update(float deltaTime, glm::vec2 PlayerPosition, const ObstacleList& obstacleList); 
 	void draw(aie::Renderer2D* renderer) override;
-	void handleCollisionObstacle(const std::shared_ptr<Obstacle> obstacle, float deltaTime);
-	void setPosition(float x, float y);
-	void Attack(std::shared_ptr<Player> player);
+	void handleCollisionObstacle(const std::shared_ptr<Obstacle> obstacle, float deltaTime); //Handles collision logic
+	void setPosition(float x, float y); //sets the position of the enemy when released from pooler
+	void Attack(std::shared_ptr<Player> player, float deltaTime); //Allows the enemy to attack
 };

@@ -5,14 +5,17 @@
 Bullet ::Bullet(float velocity, glm::vec2 pos, float angle, float life) 
 	: Monobehaviour(pos, "./bin/textures/bullets_colored_edit.png", 1, 1, glm::vec2{ 9,9 })
 {
-	Active = false;
-	Velocity = velocity;
-	Angle = angle;
-	bulletLife = life;
-	alive = 0;
+	Active = false; //set the bullet to inactive on creation
+	Velocity = velocity; //set the velocity to the passed in variable
+	Angle = angle; // set the bullets angle
+	bulletLife = life; // set how long it will survive
+	alive = 0; //intialise how long it has been alive
 }
+//This function is similar to the constructer only it is called when the weapon is fired.
+//It is needed to reset the bullets stats when it comes from the pooler
+//in case it retains any of the values from when it was previously used
 void Bullet:: set(float velocity, glm::vec2 pos, float angle, float life) {
-	Velocity = velocity;
+	Velocity = velocity; 
 	Angle = angle;
 	bulletLife = life;
 	position = pos;
@@ -21,10 +24,9 @@ void Bullet:: set(float velocity, glm::vec2 pos, float angle, float life) {
 
 void Bullet:: update(float deltaTime)
 {
-	alive += deltaTime;
-	position.x = position.x + (Velocity * cos(Angle));
-	position.y = position.y + (Velocity * sin(Angle));
-	//if(collision())
+	alive += deltaTime; //increase how long it has been alice
+	position.x = position.x + (Velocity * cos(Angle)); // move it in the x
+	position.y = position.y + (Velocity * sin(Angle)); // move it in the y
 }
 void Bullet:: draw(aie::Renderer2D* renderer)
 {

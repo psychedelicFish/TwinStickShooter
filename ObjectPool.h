@@ -3,32 +3,42 @@
 #include <iostream>
 #include "Enemy.h"
 #include "Bullet.h"
+#include "Obstacle.h"
+#include <Texture.h>
+#include <Renderer2D.h>
 
+//Object Pool classes - This header file handles all the object pooling for Enemies, Obstacles and Bullets 
 class EnemyObjectPool {
 
 protected:
-	std::list<std::shared_ptr<Enemy>> pool;
+	std::list<std::shared_ptr<Enemy>> pool; //the list that holds the pool
+	aie::Texture* enemyTexture = new aie::Texture("./bin/textures/Insect.png"); //the texture to pool
 public:
-	EnemyObjectPool (int amountToPool) {
+	EnemyObjectPool (int amountToPool) { //constructer, takes an int and pools that many objects
 		for (int i = 0; i < amountToPool; i++) {
-			std::shared_ptr<Enemy> enemy(new Enemy({ 1000, 1000 }));
-			enemy->Active = false;
-			pool.push_back(enemy);
-			std::cout << pool.size();
+			std::shared_ptr<Enemy> enemy(new Enemy({ 10000, 10000 }, enemyTexture)); //create the enemy
+			enemy->Active = false; //sets those objects to be false in the scene
+			pool.push_back(enemy); //add the objects to the pool
 		}
 	}
-	std::shared_ptr<Enemy> GetObjectFromPool() {
-		for (std::shared_ptr<Enemy> object : pool) {
-			if (!object->Active) {
-				object->Active = true;
-				return object;
+	std::shared_ptr<Enemy> GetObjectFromPool() { //Function to return the object from the pool
+		for (std::shared_ptr<Enemy> object : pool) { //go through eeach object in the pool
+			if (!object->Active) { //if we find one that isnt active
+				object->Active = true; //set it to active 
+				return object; // and return it
+			}
+			else { //otherwise we need to increase the pool size. This shouldnt happen to often with a decent sized pool
+				std::shared_ptr<Enemy> enemy(new Enemy({ 1000,1000}, enemyTexture));
+				enemy->Active = true;
+				pool.push_back(enemy);
+				return enemy;
 			}
 		}
 		return nullptr;
 	}
 
 };
-
+//Class for the bullet object pooler - works very simaler to the enemy pooler
 class BulletObjectPool {
 protected:
 	std::list<std::shared_ptr<Bullet>> pool;
@@ -57,4 +67,37 @@ public:
 	}
 		
 };
+//Class for the obstacle object pooler - works very simaler to the enemy pooler
+class ObstaclePool {
+protected:
+	aie::Texture* obstacleTexture = new aie::Texture("./bin/textures/tree.png");
+	std::list<std::shared_ptr<Obstacle>> pool;
+public:
+	ObstaclePool(int amountToPool) {
+		for (int i = 0; i < amountToPool; i++) {
+			std::shared_ptr<Obstacle> ob(new Obstacle({ 10000, 10000 }, obstacleTexture));
+			ob->Active = false;
+			pool.push_back(ob);
+		}
+	}
+	std::shared_ptr<Obstacle> GetObjectFromPool() {
+		for (std::shared_ptr<Obstacle> object : pool) {
+			if (!object->Active) {
+				object->Active = true;
+				return object;
+			}
+			else {
+				std::shared_ptr<Obstacle> obs(new Obstacle({ 10000, 10000 }, obstacleTexture));
+				obs->Active = true;
+				pool.push_back(obs);
+				return obs;
+			}
+		}
+		return nullptr;
+	}
+
+
+};
+
+
 
