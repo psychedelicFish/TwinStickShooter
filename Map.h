@@ -3,8 +3,7 @@
 #include <Texture.h>
 #include <glm/vec2.hpp>
 #include <list>
-class TileObjectPool;
-class Tile;
+class Node;
 class Map
 {
 private:
@@ -12,6 +11,8 @@ private:
 	//Where the map is located
 	float locationX;
 	float locationY;
+	std::list<Node*> map;
+	
 public:
 	Map();//Constructer
 	~Map();//Destructer

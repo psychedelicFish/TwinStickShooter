@@ -92,7 +92,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)temp\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)</OutDir>
     <IntDir>$(SolutionDir)temp\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)bootstrap;$(SolutionDir)dependencies/imgui;$(SolutionDir)dependencies/glm;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>$(SolutionDir)dependencies\bootstrap\$(Platform)\$(Configuration);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
@@ -168,6 +168,7 @@
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Monobehaviour.cpp" />
     <ClCompile Include="Obstacle.cpp" />
+    <ClCompile Include="Pathfinding.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="TwinStickShooterApp.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="Monobehaviour.h" />
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="Obstacle.h" />
+    <ClInclude Include="Pathfinding.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="TwinStickShooterApp.h" />
     <ClInclude Include="HealthBar.h" />

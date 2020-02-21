@@ -1,16 +1,23 @@
 #include "Map.h"
+#include "Pathfinding.h"
 #include <iostream>
 #include "ObjectPool.h"
 
 Map::Map()
 {
-	texture = new aie::Texture("./bin/textures/Map.png");
+	for (int i = 0; i <= 48; i++) {
+		auto node = new Node(glm::vec2(i % 22, (int)i / 22), true);
+	}
+	//texture = new aie::Texture("./bin/textures/Map.png");
 }
 Map::~Map() {
 }
 void Map:: draw(aie::Renderer2D* renderer){
+	
 	renderer->setUVRect(0, 0, 1, 1);
-	renderer->drawSprite(texture, locationX, locationY);
+	for each(Node* n in map) {
+		n->Draw(renderer);
+	}
 }
 void Map::update(float deltaTime, glm::vec2 loc) {
 	

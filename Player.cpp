@@ -61,9 +61,7 @@ void Player::Update(float deltaTime, std::list<std::shared_ptr<Enemy>>& e, std::
 	position.y += velocity.y * deltaTime;//Update Y position
 
 	glm::vec2 mousePos = { input->getMouseX(), input->getMouseY()};
-	
-	
-	
+
 	glm::vec2 CameraPos = { x, y };
 	
 	glm::vec2 rotationVec = (mousePos + CameraPos) - position;
