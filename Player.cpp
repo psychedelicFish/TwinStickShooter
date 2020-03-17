@@ -62,9 +62,9 @@ void Player::Update(float deltaTime, std::list<std::shared_ptr<Enemy>>& e, std::
 
 	glm::vec2 mousePos = { input->getMouseX(), input->getMouseY()};
 
-	glm::vec2 CameraPos = { x, y };
+	//glm::vec2 CameraPos = { x, y };
 	
-	glm::vec2 rotationVec = (mousePos + CameraPos) - position;
+	glm::vec2 rotationVec = (mousePos /*+ CameraPos*/) - position;
 	rotationVec = glm::normalize(rotationVec);
 	rotation = acos(rotationVec.x);
 

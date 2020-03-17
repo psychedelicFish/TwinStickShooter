@@ -1,14 +1,21 @@
 #include "Pathfinding.h"
 #include <exception>
 #include <algorithm>
+#include <iostream>
+#include "Map.h"
 
-Node::Node(glm::vec2 p, bool pass)
+Node::Node(glm::vec2 p, float score)
 {
 	position = p;
-	passable = pass;
+	gscore = score;
+	parent = nullptr;
 }
 
-void Node::SetGScore(int score) {
+glm::vec2 Node::GetPosition() {
+	return position;
+}
+
+void Node::SetGScore(float score) {
 	gscore = score;
 }
 float Node::GetGScore() {
@@ -24,13 +31,7 @@ Node* Node::GetParent() {
 
 void Node::Draw(aie::Renderer2D * r)
 {
-	if (passable) {
-		r->drawSprite(passableTexture, position.x, position.y);
-	}
-	else {
-		r->drawSprite(impassableTexture, position.x, position.y);
-	}
-	
+	r->drawCircle(position.x, position.y, 5.f);
 }
 
 std::list<Node*> Pathfinder::findPath(Node* start, Node* end)
@@ -51,17 +52,20 @@ std::list<Node*> Pathfinder::findPath(Node* start, Node* end)
 	openList.push_back(start);
 
 	while (!openList.empty()) {
-		std::sort(openList.begin(), openList.end());
+		auto sortList = [](Node* i, Node* j) { return (i->GetGScore() < j->GetGScore()); };
+		
+		openList.sort(sortList);
 
 		Node* currentNode = *openList.begin();
 
 		if (currentNode == end) {
-			return path;
+			break;
 		}
+
 		openList.remove(currentNode);
 		closedList.push_back(currentNode);
 
-		for each(Edge e in currentNode->connections) {
+		for (Edge e : currentNode->connections) {
 			
 			auto i = std::find(closedList.begin(), closedList.end(), e.target);
 			if(i == closedList.end()){
@@ -69,7 +73,7 @@ std::list<Node*> Pathfinder::findPath(Node* start, Node* end)
 
 				auto j = std::find(openList.begin(), openList.end(), e.target);
 				if (j == openList.end()) {
-					e.target->SetGScore = gscore;
+					e.target->SetGScore(gscore);
 					e.target->SetParent(currentNode);
 					openList.push_back(e.target);
 				}
@@ -90,4 +94,55 @@ std::list<Node*> Pathfinder::findPath(Node* start, Node* end)
 	}
 
 	return path;
+}
+
+void Pathfinder::AddNodeToList(Node* n) {
+	nodes.push_back(n);
+}
+
+void Pathfinder::SetUpEdges(const std::vector<Tile*> &m) {
+
+	for (auto y = 0; y < mapy; y++) {
+		for (auto x = 0; x < mapx; x++) {
+			Node* newnode = nodes[y * mapx + x];
+
+			if (!newnode) {
+				continue;
+			}
+
+			for (int oy = -1; oy < 2; ++oy) {
+				for (int ox = -1; ox < 2; ++ox) {
+					if (x + ox >= 0 &&
+						x + ox < mapx &&
+						y + oy >= 0 &&
+						y + oy < mapy &&
+						nodes[(y + oy) * mapx + x + ox] != nullptr &&
+						!(ox == 0 && oy == 0) && m[(y + oy) * mapx + x + ox]->passable) {
+
+							float cost = (ox != 0 && oy != 0) ? 1.414f : 1.f;
+							newnode->connections.push_back(Edge{ nodes[(y + oy) * mapx + x + ox], cost });
+
+					}
+				}
+
+			}
+		}
+	}
+}
+
+Pathfinder::Pathfinder(int x, int y) {
+	mapx = x;
+	mapy = y;
+}
+void Pathfinder::Draw(aie::Renderer2D * r) {
+}
+
+Node* Pathfinder::ReturnNodeByIndex(int i) {
+	return nodes[i];
+}
+
+void Pathfinder::ResetNodeGScores() {
+	for (Node* n : nodes) {
+		n->SetGScore(100000.f);
+	}
 }

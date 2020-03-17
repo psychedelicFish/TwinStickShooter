@@ -21,9 +21,9 @@ void HealthBar::draw(aie::Renderer2D* renderer, float x, float y) {
 	renderer->drawBox(x, y, width, height);
 
 	float ratio = currentHealth / (float)maxHealth; //need a ratio so the bar looks filled nicely 
-	std::cout << ratio << std::endl; //testing purposes
+	//std::cout << ratio << std::endl; //testing purposes
 	float healthFull = width * ratio; //sets how full the bar is 
-	std::cout << healthFull << std::endl; //testing purposes 
+	//std::cout << healthFull << std::endl; //testing purposes 
 
 	float offsetX = x - (width - healthFull) * 0.5f; //offsets the bar based on how big it is 
 	

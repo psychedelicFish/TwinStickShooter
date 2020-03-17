@@ -130,9 +130,9 @@ void TwinStickShooterApp::draw() {
 		}
 		m_2dRenderer->setUVRect(0, 0, 1, 1);
 		player->draw(m_2dRenderer);
-		bar->draw(m_2dRenderer, player->getX() + 500/2, player->getY() + 600/2);
+		bar->draw(m_2dRenderer, 600, 700);
 		snprintf(scoreText, 64, "Your Score : %i points", score);
-		m_2dRenderer->drawText(fontControls, scoreText, player->getX() - 500 / 2, player->getY() - 600 / 2);
+		m_2dRenderer->drawText(fontControls, scoreText, 0, 690);
 	}
 	else if (GameState == &TwinStickShooterApp::GameOver) {
 
@@ -183,66 +183,26 @@ void TwinStickShooterApp::PlayGame(float deltaTime) {
 	aie::Input* input = aie::Input::getInstance();	
 	gameTimer += deltaTime;
 	
-	//Making sure there are always the correct amount of obstacles in the scene
-	//Will always populate the scene up to the pooled amount
-	if (obstaclesInScene < obstaclesPooled) {
-		for (int i = 0; i < obstaclesPooled - obstaclesInScene; i++) {
-			std::shared_ptr<Obstacle> obs = obstaclePool->GetObjectFromPool();
-			
-			int x = rand() % 721 - (720 / 2);
-			int y = rand() % 721 - (720 / 2);
-			x = x + player->getX();
-			y = y + player->getY();
-
-			if ((player->getX() - x < 60 && player->getX() - x > -60) ||
-				(player->getY() - y < 60 && player->getY() - y > -60)) {
-				if (x < 0) {
-					x -= 100;
-				}
-				if (y < 0) {
-					y -= 100;
-				}
-				if (x >= 0) {
-					x += 100;
-				}
-				if (y >= 0) {
-					y += 100;
-				}
-			}
-			obs->setPosition(x, y);
-			obstacleList.push_back(obs);
-			obstaclesInScene++;
-		}
-	}
 	//Making sure there are always the correct amount of enemies in the scene
 	//Will always populate the scene up to the max Enemies amount
 	assert(maxEnemies > 0);
 	if (enemiesInScene < maxEnemies) {
 		for (int i = 0; i < maxEnemies - enemiesInScene; i++) {
 			std::shared_ptr<Enemy> enemy = enemyPool->GetObjectFromPool();
-			int x = rand() % 721 - (720/2);
-			int y = rand() % 721 - (720/2);
-			x = x + player->getX();
-			y = y + player->getY();
-			if ((player->getX() - x < 30 && player->getX() - x > -30)  ||
-				(player->getY() - y < 30 && player->getY() - y > -30)) {
-				if (x < 0) {
-					x -= 30;
+
+			while (true) {
+				int x = rand() % 721;
+				int y = rand() % 721;
+				if (abs(player->getX() - x) < 30 &&
+				   (abs(player->getY() - y) < 30)) {
+					continue;
 				}
-				if (y < 0) {
-					y -= 30;
-				}
-				if (x >= 0) {
-					x += 30;
-				}
-				if (y >= 0) {
-					y += 30;
-				}
+
+				enemy->setPosition(x, y);
+				enemyList.push_back(enemy);
+				enemiesInScene++;
+				break;
 			}
-			std::cout << i;
-			enemy->setPosition(x, y);
-			enemyList.push_back(enemy);
-			enemiesInScene++;
 		}
 	}
 	//Checking to see if we are firing 
@@ -275,21 +235,6 @@ void TwinStickShooterApp::PlayGame(float deltaTime) {
 			}
 			(*bullet)->update(deltaTime);// updates the bullet
 			
-			for (auto obstacle = obstacleList.begin(); obstacle != obstacleList.end(); obstacle++) {
-
-				if ((*bullet)->collision((*obstacle))) {
-
-					(*bullet)->Active = false;
-					auto bulletcopy = bullet; // make a copy of the bullet
-					bullet++;// increase iterator
-					bulletList.erase(bulletcopy);
-
-					if (bullet == bulletList.end()) { // make sure that we havent increased beyond the last
-						break; // if we have break the loop.
-					}
-				}
-				
-			}
 			if (bullet == bulletList.end()) { // make sure that we havent increased beyond the last
 
 				break; // if we have break the loop.
@@ -331,13 +276,11 @@ breakEnemyList:
 
 	float x = 0.f;
 	float y = 0.f;
-	m_2dRenderer->setCameraPos(player->getX() - 720 / 2, player->getY() - 720 / 2);
-	m_2dRenderer->getCameraPos(x, y);
 	
 	player->Update(deltaTime, enemyList, obstacleList, x, y);
 
 	for (std::shared_ptr<Enemy> enemy : enemyList) {
-		enemy->update(deltaTime, player->getPosition(), obstacleList);
+		enemy->update(deltaTime, *map, obstacleList, player->getPosition());
 		//std::cout << enemy->getX() << " , " << enemy->getY() << std::endl;
 		if (enemy->collision(player)) {
 			enemy->Attack(player, deltaTime);
@@ -346,23 +289,6 @@ breakEnemyList:
 			if (!player->Alive) {
 				GameState = &TwinStickShooterApp::GameOver;
 			}
-		}
-	}
-
-	for (auto object = obstacleList.begin(); object != obstacleList.end(); object++) {
-		if ((*object)->getX() > player->getX() + 720 / 2 || (*object)->getX() < player->getX() - 720 / 2 ||
-			(*object)->getY() > player->getY() + 720 / 2 || (*object)->getY() < player->getY() - 720 / 2) {
-				
-			(*object)->Active = false;
-			auto objectcopy = object; // make a copy of the bullet
-			object++;// increase iterator
-			obstacleList.erase(objectcopy);
-			obstaclesInScene--;
-
-			if (object == obstacleList.end()) { // make sure that we havent increased beyond the last
-				break; // if we have break the loop.
-			}
-			
 		}
 	}
 
@@ -384,7 +310,6 @@ breakEnemyList:
 		}
 	}
 
-	//std::cout << "Camera X: " << x << "Camera Y: " << y << std::endl;
 }
 #pragma endregion
 

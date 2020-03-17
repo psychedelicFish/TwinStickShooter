@@ -6,36 +6,40 @@
 #include <Texture.h>
 
 struct Edge {
-	Node* target;
+	class Node* target;
 	float cost;
 };
 
 class Node {
 private:
-	glm::vec2 position;
-	
-	aie::Texture* passableTexture = new aie::Texture("./bin/textures/Map_Passable.png");
-	aie::Texture* impassableTexture = new aie::Texture("./bin/textures/Map_Impassable.png");
 	float gscore;
 	Node* parent;
-	
-	bool passable;
+	glm::vec2 position;
 
 public:
-	Node(glm::vec2 p, bool pass);
+	Node(glm::vec2 p, float score);
 	
 	std::vector<Edge> connections;
-	void SetGScore(int score);
+	void SetGScore(float score);
 	float GetGScore();
 	void SetParent(Node* p);
 	Node* GetParent();
-	void Draw(aie::Renderer2D* r);
-
-
-	bool operator()(Node* i, Node* j) { return (i->gscore < j->gscore); }
-	
+	void Draw(aie::Renderer2D* r); //for debuging
+	glm::vec2 GetPosition();
 };
 
+struct Tile;
 class Pathfinder {
+private:
+	std::vector<Node*> nodes;
+	int mapx;
+	int mapy;
+public:
+	void AddNodeToList(Node* n);
 	std::list<Node*> findPath(Node* start, Node* end);
+	Pathfinder(int x, int y);
+	void Draw(aie::Renderer2D* r); //for debuging
+	void SetUpEdges(const std::vector<Tile*> &m);
+	Node* ReturnNodeByIndex(int i);
+	void ResetNodeGScores();
 };

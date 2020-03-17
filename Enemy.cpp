@@ -2,6 +2,8 @@
 #include "Enemy.h"
 #include "Player.h"
 #include "Obstacle.h"
+#include "Pathfinding.h"
+#include "Map.h"
 #include <math.h>
 #include <cmath>
 #include <iostream>
@@ -30,10 +32,19 @@ void Enemy::draw(aie::Renderer2D* renderer)
 	float y = (animationFrame / (int)frameX) / frameY;
 	renderer->setUVRect(x, y, 1/frameX, 1/frameY);
 	renderer->drawSprite(texture, position.x, position.y, sizeX, sizeY, rotationAngle - glm::radians(90.f));
+	for (Node* n : path) {
+		n->Draw(renderer);
+	}
 }
-void Enemy::update(float deltaTime, glm::vec2 PlayerPosition, const ObstacleList& obstacleList) {
-
-	DirectionToPlayer(PlayerPosition);
+void Enemy::update(float deltaTime, Map& map, const ObstacleList& obstacleList, glm::vec2 playerPosition) {
+	
+	pathTimer += deltaTime;
+	if (pathTimer >= .25f) {
+		QueryPath(map, playerPosition);
+		pathTimer = 0.0f;
+	}
+	DirectionToNode();
+	DirectionToPlayer(playerPosition);
 	CalculateRotation();
 	CalculateVelocity(deltaTime);
 	Walk(deltaTime);
@@ -75,6 +86,18 @@ void Enemy::Attack(std::shared_ptr<Player> player, float deltaTime) {
 
 void Enemy::Walk(float deltaTime) {
 	position += current_velocity * deltaTime; //set the new position based on angle and velocity 
+	
+	if (path.empty()) {
+		return;
+	}
+
+	if (Arrive()) {
+		path.pop_front();
+	}
+}
+
+bool Enemy::Arrive() {
+	return((*path.begin())->GetPosition().x - position.x  < 0.05 && ((*path.begin())->GetPosition().y - position.y < 0.05));
 }
 
 void Enemy::CalculateRotation() {
@@ -101,14 +124,27 @@ void Enemy::AdjustAnimationFrame() {
 
 void Enemy::CalculateVelocity(float deltaTime) {
 	
-	desired_velocity = directionToPlayer * speed;
+	desired_velocity = directionToNode * speed;
 	
 	glm::vec2 steering = desired_velocity - current_velocity;
 
 	current_velocity = current_velocity + steering * deltaTime;
 }	
 
-void Enemy::DirectionToPlayer(glm::vec2 PlayerPosition) {
-	directionToPlayer = PlayerPosition - position;
+void Enemy::DirectionToNode() {
+	if (path.empty()) {
+		return;
+	}
+	directionToNode = (*path.begin())->GetPosition() - position;
+	directionToNode = glm::normalize(directionToNode);
+}
+
+void Enemy::QueryPath(Map& map, glm::vec2 playerPosition) 
+{
+	path = map.QueryPathfinder(position, playerPosition);
+}
+
+void Enemy::DirectionToPlayer(glm::vec2 playerPosition) {
+	directionToPlayer = playerPosition - position;
 	directionToPlayer = glm::normalize(directionToPlayer);
 }

@@ -25,7 +25,7 @@ bool Monobehaviour:: collision(std::shared_ptr<Monobehaviour> other) {
 		position.y > other->position.y - other->sizeY;
 }
 void Monobehaviour::die() {
-	std::cout << "dead" << std::endl;
+	//std::cout << "dead" << std::endl;
 }
 void Monobehaviour:: update(float deltaTime) {}
 void Monobehaviour:: draw(aie::Renderer2D* renderer) {
