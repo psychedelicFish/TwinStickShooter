@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <iostream>
 #include "Map.h"
+#include "Queue.h"
+
 
 Node::Node(glm::vec2 p, float score)
 {
@@ -34,35 +36,39 @@ void Node::Draw(aie::Renderer2D * r)
 	r->drawCircle(position.x, position.y, 5.f);
 }
 
+namespace std {
+	bool less(Node* i, Node* j) {
+		return (i->GetGScore() < j->GetGScore());
+	}
+}
+
 std::list<Node*> Pathfinder::findPath(Node* start, Node* end)
 {
 	std::list<Node*> path;
 	if (start == nullptr || end == nullptr) {
-		throw std::runtime_error("start node or end node does not exist");
+		return path;
 	}
 	if (start == end) {
 		return path;
 	}
 	start->SetGScore(0);
 	start->SetParent(nullptr);
+	
+	Queue<Node*> openList;
 
-	std::list<Node*> openList;
 	std::list<Node*> closedList;
 
-	openList.push_back(start);
+	openList.push(start);
 
 	while (!openList.empty()) {
-		auto sortList = [](Node* i, Node* j) { return (i->GetGScore() < j->GetGScore()); };
-		
-		openList.sort(sortList);
 
-		Node* currentNode = *openList.begin();
+		Node* currentNode = openList.top();
 
 		if (currentNode == end) {
 			break;
 		}
 
-		openList.remove(currentNode);
+		openList.pop();
 		closedList.push_back(currentNode);
 
 		for (Edge e : currentNode->connections) {
@@ -70,12 +76,12 @@ std::list<Node*> Pathfinder::findPath(Node* start, Node* end)
 			auto i = std::find(closedList.begin(), closedList.end(), e.target);
 			if(i == closedList.end()){
 				float gscore = currentNode->GetGScore() + e.cost;
-
+				
 				auto j = std::find(openList.begin(), openList.end(), e.target);
 				if (j == openList.end()) {
 					e.target->SetGScore(gscore);
 					e.target->SetParent(currentNode);
-					openList.push_back(e.target);
+					openList.push(e.target);
 				}
 				else if (gscore < e.target->GetGScore()) {
 					e.target->SetGScore(gscore);
@@ -100,7 +106,7 @@ void Pathfinder::AddNodeToList(Node* n) {
 	nodes.push_back(n);
 }
 
-void Pathfinder::SetUpEdges(const std::vector<Tile*> &m) {
+void Pathfinder::SetUpEdges(const TileList &m) {
 
 	for (auto y = 0; y < mapy; y++) {
 		for (auto x = 0; x < mapx; x++) {

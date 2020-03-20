@@ -4,6 +4,10 @@
 #include <list>
 #include <Renderer2D.h>
 #include <Texture.h>
+#include <memory>
+
+struct Tile;
+using TileList = std::vector<std::shared_ptr<Tile>>;
 
 struct Edge {
 	class Node* target;
@@ -35,11 +39,11 @@ private:
 	int mapx;
 	int mapy;
 public:
-	void AddNodeToList(Node* n);
+	void AddNodeToList(Node* );
 	std::list<Node*> findPath(Node* start, Node* end);
 	Pathfinder(int x, int y);
 	void Draw(aie::Renderer2D* r); //for debuging
-	void SetUpEdges(const std::vector<Tile*> &m);
+	void SetUpEdges(const TileList &m);
 	Node* ReturnNodeByIndex(int i);
 	void ResetNodeGScores();
 };

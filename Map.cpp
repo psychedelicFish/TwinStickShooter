@@ -8,7 +8,7 @@ Map::Map()
 	pathfinder = new Pathfinder(mapWidth,mapHeight);
 	for (int i = 0; i < mapWidth * mapHeight; i++) {
 		if (m[i] == 0) {
-			auto tile = new PassableTile(glm::vec2(i % mapWidth * tileSizeX, (int)(i / mapHeight) * tileSizeY));
+			std::shared_ptr<Tile> tile(new PassableTile(glm::vec2(i % mapWidth * tileSizeX, (int)(i / mapHeight) * tileSizeY)));
 			map.push_back(tile);
 
 			glm::vec2 nodePosition = { tile->position.x, tile->position.y };
@@ -17,7 +17,7 @@ Map::Map()
 			pathfinder->AddNodeToList(node);
 		}
 		else {
-			auto tile = new ImpassableTile(glm::vec2(i % mapWidth * tileSizeX, (int)(i / mapHeight) * tileSizeY));
+			std::shared_ptr<Tile> tile(new ImpassableTile(glm::vec2(i % mapWidth * tileSizeX, (int)(i / mapHeight) * tileSizeY)));
 			map.push_back(tile);
 			glm::vec2 nodePosition = { tile->position.x, tile->position.y };
 			auto node = new Node(nodePosition, 100000.f);
@@ -33,7 +33,7 @@ Map::~Map() {
 }
 void Map:: draw(aie::Renderer2D* renderer){
 	
-	for(Tile* n : map) {
+	for(auto n : map) {
 		n->Draw(renderer);
 	}
 	pathfinder->Draw(renderer);

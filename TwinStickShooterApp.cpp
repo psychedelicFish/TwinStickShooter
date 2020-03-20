@@ -8,7 +8,6 @@
 #include "Map.h"
 #include "Player.h"
 #include "Weapon.h"
-#include "Obstacle.h"
 #include "Button.h"
 #include <iostream>
 #include <string.h>
@@ -120,9 +119,6 @@ void TwinStickShooterApp::draw() {
 		map->draw(m_2dRenderer);
 		for (std::shared_ptr<Enemy> enemy : enemyList) {
 			enemy->draw(m_2dRenderer);
-		}
-		for (std::shared_ptr<Obstacle> obstacle : obstacleList) {
-			obstacle->draw(m_2dRenderer);
 		}
 		for (std::shared_ptr<Bullet> bullet : bulletList)
 		{
@@ -277,10 +273,10 @@ breakEnemyList:
 	float x = 0.f;
 	float y = 0.f;
 	
-	player->Update(deltaTime, enemyList, obstacleList, x, y);
+	player->Update(deltaTime, x, y);
 
 	for (std::shared_ptr<Enemy> enemy : enemyList) {
-		enemy->update(deltaTime, *map, obstacleList, player->getPosition());
+		enemy->update(deltaTime, *map, player->getPosition());
 		//std::cout << enemy->getX() << " , " << enemy->getY() << std::endl;
 		if (enemy->collision(player)) {
 			enemy->Attack(player, deltaTime);
@@ -341,7 +337,6 @@ void TwinStickShooterApp::StartGame(float deltaTime){
 		//Create the object pools
 		enemyPool.reset(new EnemyObjectPool(maxEnemies * 100)); //100 is so we pool enough enemies to use before we create new ones
 		bulletPool.reset(new BulletObjectPool(bulletsPooled));
-		obstaclePool.reset(new ObstaclePool(obstaclesPooled));
 
 		bar.reset(new HealthBar(player->GetMaxHealth(), 600, 600, 200, 20));
 		

@@ -3,7 +3,7 @@
 
 
 Bullet ::Bullet(float velocity, glm::vec2 pos, float angle, float life) 
-	: Monobehaviour(pos, "./bin/textures/bullets_colored_edit.png", 1, 1, glm::vec2{ 9,9 })
+	: Monobehaviour(pos, textureManager.GetTexture("./bin/textures/bullets_colored_edit.png"), 1, 1, glm::vec2{ 9,9 })
 {
 	Active = false; //set the bullet to inactive on creation
 	Velocity = velocity; //set the velocity to the passed in variable
@@ -31,7 +31,7 @@ void Bullet:: update(float deltaTime)
 void Bullet:: draw(aie::Renderer2D* renderer)
 {
 	renderer->setUVRect(0.f, 0.f, 1.f, 1.f);
-	renderer->drawSprite(texture, position.x, position.y);;
+	renderer->drawSprite(Texture.get(), position.x, position.y);;
 }
 float Bullet::getLife() {
 	return bulletLife;

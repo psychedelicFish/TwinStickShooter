@@ -2,6 +2,7 @@
 #include "Monobehaviour.h"
 #include <Texture.h>
 #include <list>
+
 class Enemy;
 class Weapon;
 class Obstacle;
@@ -15,7 +16,7 @@ class Player : public Monobehaviour
 	//Health stuff
 	int currentHealth;
 	int MaxHealth;
-	aie::Texture* lightOverlay; //this is the overlay for the player
+	std::shared_ptr<aie::Texture> lightOverlay; //this is the overlay for the player
 	
 	//Camera Position relative to the player
 	float cameraX;
@@ -25,7 +26,7 @@ class Player : public Monobehaviour
 public:
 	Player(); //constructer
 	~Player();//destructer
-	void Update(float deltaTime,std::list<std::shared_ptr<Enemy>>& e, std::list<std::shared_ptr<Obstacle>>& o, float x, float y);
+	void Update(float deltaTime, float x, float y);
 	void draw(aie::Renderer2D* renderer);
 	void TakeDamage(int dmg); //allows the player to take damage
 	glm::vec2 spriteSize; //how big the player sprite is 

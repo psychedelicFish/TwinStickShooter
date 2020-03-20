@@ -1,7 +1,6 @@
 #define _USE_MATH_DEFINES
 #include "Enemy.h"
 #include "Player.h"
-#include "Obstacle.h"
 #include "Pathfinding.h"
 #include "Map.h"
 #include <math.h>
@@ -10,12 +9,11 @@
 #include <glm/glm.hpp>
 #include <glm/geometric.hpp>
 
-using ObstacleList = std::list<std::shared_ptr<Obstacle>>;
-Enemy::Enemy(glm::vec2 pos, aie::Texture* Texture) : Monobehaviour(pos, 8, 1, glm::vec2{ 30,30 })
+Enemy::Enemy(glm::vec2 pos, std::shared_ptr<aie::Texture> texture) : Monobehaviour(pos, 8, 1, glm::vec2{ 30,30 })
 {
 	speed = 50.0f; //speed of enemy
 	Active = false; //set the enemy to inactive
-	texture = Texture; //set the pointer to the correct texture
+	Texture = texture; //set the pointer to the correct texture
 	attackTime = .5f; //intialise how often the enemy attacks
 	attackTimer = 1.f; //intialise the attack timer to something high so it attacks the player on first contact
 	current_velocity = { 0,0 };
@@ -31,15 +29,15 @@ void Enemy::draw(aie::Renderer2D* renderer)
 	float x = (animationFrame % (int)frameX) / frameX;
 	float y = (animationFrame / (int)frameX) / frameY;
 	renderer->setUVRect(x, y, 1/frameX, 1/frameY);
-	renderer->drawSprite(texture, position.x, position.y, sizeX, sizeY, rotationAngle - glm::radians(90.f));
+	renderer->drawSprite(Texture.get(), position.x, position.y, sizeX, sizeY, rotationAngle - glm::radians(90.f));
 	for (Node* n : path) {
 		n->Draw(renderer);
 	}
 }
-void Enemy::update(float deltaTime, Map& map, const ObstacleList& obstacleList, glm::vec2 playerPosition) {
+void Enemy::update(float deltaTime, Map& map, glm::vec2 playerPosition) {
 	
 	pathTimer += deltaTime;
-	if (pathTimer >= .25f) {
+	if (pathTimer >= 1.f) {
 		QueryPath(map, playerPosition);
 		pathTimer = 0.0f;
 	}
@@ -48,32 +46,8 @@ void Enemy::update(float deltaTime, Map& map, const ObstacleList& obstacleList, 
 	CalculateRotation();
 	CalculateVelocity(deltaTime);
 	Walk(deltaTime);
-
-	for (auto it : obstacleList) { //Iterate through the obstacle list
-		if (collision(it)) {
-			position.y -= sin(rotationAngle) * speed * deltaTime; //bounce back off the object in the oppisite direction
-			position.x -= cos(rotationAngle) * speed * deltaTime;
-			handleCollisionObstacle(it, deltaTime);
-		}
-	}
 	timer += deltaTime;
 	AdjustAnimationFrame();
-}
-//This function will slide the enemy around the obstacle based on its position to the obstacle
-//This avoids the issue of getting stuck on the obstacle
-void Enemy::handleCollisionObstacle(const std::shared_ptr<Obstacle> obstacle, float deltaTime) {
-	if (position.x < obstacle->getX() + obstacle->getSizeX()) {
-		position.x = position.x + sin(rotationAngle) * speed * deltaTime;
-	}
-	if (position.x > obstacle->getX() - obstacle->getSizeX()) {
-		position.x = position.x + sin(rotationAngle) * speed * deltaTime;
-	}
-	if (position.y < obstacle->getY() + obstacle->getSizeY()) {
-		position.y = position.y + cos(rotationAngle) * speed * deltaTime;
-	}
-	if (position.y > obstacle->getY() - obstacle->getSizeY()) {
-		position.y = position.y + cos(rotationAngle) * speed * deltaTime;
-	}
 }
 
 void Enemy::Attack(std::shared_ptr<Player> player, float deltaTime) {

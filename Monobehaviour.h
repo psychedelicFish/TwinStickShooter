@@ -3,11 +3,12 @@
 #include <glm/vec4.hpp>
 #include <Renderer2D.h>
 #include <Texture.h>
+#include "TextureManager.h"
 class Monobehaviour //base class for some objects
 {
 protected:
 	glm::vec2 position; //where the object is
-	aie::Texture* texture; // what the object looks like
+	std::shared_ptr<aie::Texture> Texture; // what the object looks like
 	//How big the object is
 	float sizeX;
 	float sizeY;
@@ -17,7 +18,7 @@ protected:
 	
 	
 public:
-	Monobehaviour(glm::vec2 pos, char* FileName, int X, int Y, glm::vec2 size);//constructer 
+	Monobehaviour(glm::vec2 pos, std::shared_ptr<aie::Texture> texture, int X, int Y, glm::vec2 size);//constructer 
 	Monobehaviour(glm::vec2 pos, int X, int Y, glm::vec2 size); //constructer for when object handles its own texture
 	~Monobehaviour(); // destructer
 	glm::vec2 getPosition(); //return the objects position

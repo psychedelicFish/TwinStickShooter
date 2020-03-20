@@ -42,7 +42,6 @@ protected:
 	//Object Poolers
 	std::shared_ptr<EnemyObjectPool> enemyPool;
 	std::shared_ptr<BulletObjectPool> bulletPool;
-	std::shared_ptr<ObstaclePool> obstaclePool;
 	
 	//Variables for poolers and asset creation
 	int enemiesInScene;

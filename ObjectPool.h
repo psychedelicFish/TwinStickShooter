@@ -3,7 +3,6 @@
 #include <iostream>
 #include "Enemy.h"
 #include "Bullet.h"
-#include "Obstacle.h"
 #include <Texture.h>
 #include <Renderer2D.h>
 
@@ -12,7 +11,7 @@ class EnemyObjectPool {
 
 protected:
 	std::list<std::shared_ptr<Enemy>> pool; //the list that holds the pool
-	aie::Texture* enemyTexture = new aie::Texture("./bin/textures/Insect.png"); //the texture to pool
+	std::shared_ptr<aie::Texture> enemyTexture = textureManager.GetTexture("./bin/textures/Insect.png"); //the texture to pool
 public:
 	EnemyObjectPool (int amountToPool) { //constructer, takes an int and pools that many objects
 		for (int i = 0; i < amountToPool; i++) {
@@ -66,37 +65,6 @@ public:
 		return nullptr;
 	}
 		
-};
-//Class for the obstacle object pooler - works very simaler to the enemy pooler
-class ObstaclePool {
-protected:
-	aie::Texture* obstacleTexture = new aie::Texture("./bin/textures/tree.png");
-	std::list<std::shared_ptr<Obstacle>> pool;
-public:
-	ObstaclePool(int amountToPool) {
-		for (int i = 0; i < amountToPool; i++) {
-			std::shared_ptr<Obstacle> ob(new Obstacle({ 10000, 10000 }, obstacleTexture));
-			ob->Active = false;
-			pool.push_back(ob);
-		}
-	}
-	std::shared_ptr<Obstacle> GetObjectFromPool() {
-		for (std::shared_ptr<Obstacle> object : pool) {
-			if (!object->Active) {
-				object->Active = true;
-				return object;
-			}
-			else {
-				std::shared_ptr<Obstacle> obs(new Obstacle({ 10000, 10000 }, obstacleTexture));
-				obs->Active = true;
-				pool.push_back(obs);
-				return obs;
-			}
-		}
-		return nullptr;
-	}
-
-
 };
 
 

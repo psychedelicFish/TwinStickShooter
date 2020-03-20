@@ -4,16 +4,18 @@
 #include <glm/vec2.hpp>
 #include <vector>
 #include <list>
+#include <memory>
+#include "TextureManager.h"
 const int mapWidth = 24;
 const int mapHeight = 24;
 
 struct Tile {
 	glm::vec2 position;
-	aie::Texture* texture;
+	std::shared_ptr<aie::Texture> texture;
 	bool passable;
 	float cost;
 	void Draw(aie::Renderer2D* r) {
-		r->drawSprite(texture, position.x, position.y);
+		r->drawSprite(texture.get(), position.x, position.y);
 	}
 	
 };
@@ -23,7 +25,7 @@ struct PassableTile : Tile{
 		cost = c;
 		passable = true;
 		position = pos;
-		texture = new aie::Texture("./bin/textures/Map_Passable.png");
+		texture = textureManager.GetTexture("./bin/textures/Map_Passable.png");
 	}
 
 };
@@ -31,10 +33,11 @@ struct ImpassableTile : Tile {
 	ImpassableTile(glm::vec2 pos) {
 		passable = false;
 		position = pos;
-		texture = new aie::Texture("./bin/textures/Map_Impassable.png");
+		texture = textureManager.GetTexture("./bin/textures/Map_Impassable.png");
 	}
 };
 
+using TileList = std::vector<std::shared_ptr<Tile>>;
 class Pathfinder;
 class Node;
 class Map
@@ -45,7 +48,9 @@ private:
 	//Where the map is located
 	float locationX;
 	float locationY;
-	std::vector<Tile*> map;
+	
+	
+	TileList map;
 
 	int tileSizeX = 30;
 	int tileSizeY = 30;

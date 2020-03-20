@@ -36,12 +36,12 @@ protected:
 	std::list<Node*> path;
 	
 public:
-	Enemy(glm::vec2 pos, aie::Texture* texture); //constructer
+	Enemy(glm::vec2 pos, std::shared_ptr<aie::Texture> texture); //constructer
 	
 	bool Active; //Is the enemy active in the scene
 	//~Enemy();
 	
-	void update(float deltaTime, Map& map, const ObstacleList& obstacleList, glm::vec2 playerPosition);
+	void update(float deltaTime, Map& map, glm::vec2 playerPosition);
 	void draw(aie::Renderer2D* renderer) override;
 	
 	void handleCollisionObstacle(const std::shared_ptr<Obstacle> obstacle, float deltaTime); //Handles collision logic

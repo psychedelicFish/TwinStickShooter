@@ -1,8 +1,9 @@
 #include "Monobehaviour.h"
+#include <memory>
 #include <iostream>
 
-Monobehaviour::Monobehaviour(glm::vec2 pos, char* FileName, int X, int Y, glm::vec2 size) {
-	texture = new aie::Texture(FileName);
+Monobehaviour::Monobehaviour(glm::vec2 pos, std::shared_ptr<aie::Texture> texture, int X, int Y, glm::vec2 size) {
+	Texture = texture;
 	sizeX = size.x;
 	sizeY = size.y;
 	frameX = X;
@@ -29,7 +30,7 @@ void Monobehaviour::die() {
 }
 void Monobehaviour:: update(float deltaTime) {}
 void Monobehaviour:: draw(aie::Renderer2D* renderer) {
-	renderer->drawSprite(texture, position.x, position.y, sizeX, sizeY);
+	renderer->drawSprite(Texture.get(), position.x, position.y, sizeX, sizeY);
 }
 glm::vec2 Monobehaviour::getPosition(){ return position; }
 float Monobehaviour::getX() { return position.x; }

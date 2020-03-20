@@ -167,10 +167,10 @@
     <ClCompile Include="HeatlhBar.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Monobehaviour.cpp" />
-    <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="Pathfinding.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="TwinStickShooterApp.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Weapon.cpp" />
@@ -179,10 +179,11 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Queue.h" />
+    <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Monobehaviour.h" />
     <ClInclude Include="ObjectPool.h" />
-    <ClInclude Include="Obstacle.h" />
     <ClInclude Include="Pathfinding.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="TwinStickShooterApp.h" />
