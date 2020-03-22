@@ -2,6 +2,7 @@
 #include "Pathfinding.h"
 #include <iostream>
 #include "ObjectPool.h"
+#include "Node.h"
 
 Map::Map()
 {
@@ -36,7 +37,6 @@ void Map:: draw(aie::Renderer2D* renderer){
 	for(auto n : map) {
 		n->Draw(renderer);
 	}
-	pathfinder->Draw(renderer);
 }
 void Map::update(float deltaTime, glm::vec2 loc) {
 	
@@ -65,4 +65,25 @@ Node* Map::CalculateNode(glm::vec2 position) {
 	int index = row * mapWidth + column;
 	
 	return pathfinder->ReturnNodeByIndex(index);
+}
+
+bool Map::CheckIfPassable(glm::vec2 position) {
+	//glm::vec2 position = { tileSizeX * ((int)(pos.x / tileSizeX)), tileSizeY * ((int)(pos.y / tileSizeY)) };
+	
+	const int row = glm::ceil((position.y - tileSizeY/2) / tileSizeY);
+	const int column = glm::ceil((position.x - tileSizeX/2) / tileSizeX);
+
+	if (row < 0 || row >= mapHeight || column < 0 || column >= mapWidth) {
+		return nullptr;
+	}
+
+	int index = row * mapWidth + column;
+	if (map[index]->passable) {
+		return true;
+	}
+	else {
+		return false;
+	}
+
+	//return map[index]->passable;
 }

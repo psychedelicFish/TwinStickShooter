@@ -4,44 +4,19 @@
 #include <iostream>
 #include "Map.h"
 #include "Queue.h"
+#include "Node.h"
 
-
-Node::Node(glm::vec2 p, float score)
-{
-	position = p;
-	gscore = score;
-	parent = nullptr;
-}
-
-glm::vec2 Node::GetPosition() {
-	return position;
-}
-
-void Node::SetGScore(float score) {
-	gscore = score;
-}
-float Node::GetGScore() {
-	return gscore;
-}
-
-void Node::SetParent(Node* p) {
-	parent = p;
-}
-Node* Node::GetParent() {
-	return parent;
-}
-
-void Node::Draw(aie::Renderer2D * r)
-{
-	r->drawCircle(position.x, position.y, 5.f);
-}
 
 namespace std {
+	//less function overload used in the prioity queue within find path
 	bool less(Node* i, Node* j) {
 		return (i->GetGScore() < j->GetGScore());
 	}
 }
 
+//Djikstras Algorithim for path finding,
+//takes a start and an end point and finds the shortest path 
+//based on the graph of created nodes 
 std::list<Node*> Pathfinder::findPath(Node* start, Node* end)
 {
 	std::list<Node*> path;
@@ -54,7 +29,7 @@ std::list<Node*> Pathfinder::findPath(Node* start, Node* end)
 	start->SetGScore(0);
 	start->SetParent(nullptr);
 	
-	Queue<Node*> openList;
+	Queue openList;
 
 	std::list<Node*> closedList;
 
@@ -87,7 +62,6 @@ std::list<Node*> Pathfinder::findPath(Node* start, Node* end)
 					e.target->SetGScore(gscore);
 					e.target->SetParent(currentNode);
 				}
-
 			}
 		}
 	}
@@ -102,9 +76,11 @@ std::list<Node*> Pathfinder::findPath(Node* start, Node* end)
 	return path;
 }
 
+
 void Pathfinder::AddNodeToList(Node* n) {
 	nodes.push_back(n);
 }
+
 
 void Pathfinder::SetUpEdges(const TileList &m) {
 
@@ -116,6 +92,9 @@ void Pathfinder::SetUpEdges(const TileList &m) {
 				continue;
 			}
 
+			//Go through each of the possible connecting nodes
+			//Check if it exists, isnt off the map, and is passable
+			//If it is we add a connection
 			for (int oy = -1; oy < 2; ++oy) {
 				for (int ox = -1; ox < 2; ++ox) {
 					if (x + ox >= 0 &&
@@ -140,8 +119,7 @@ Pathfinder::Pathfinder(int x, int y) {
 	mapx = x;
 	mapy = y;
 }
-void Pathfinder::Draw(aie::Renderer2D * r) {
-}
+
 
 Node* Pathfinder::ReturnNodeByIndex(int i) {
 	return nodes[i];

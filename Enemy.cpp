@@ -2,6 +2,7 @@
 #include "Enemy.h"
 #include "Player.h"
 #include "Pathfinding.h"
+#include "Node.h"
 #include "Map.h"
 #include <math.h>
 #include <cmath>
@@ -17,6 +18,7 @@ Enemy::Enemy(glm::vec2 pos, std::shared_ptr<aie::Texture> texture) : Monobehavio
 	attackTime = .5f; //intialise how often the enemy attacks
 	attackTimer = 1.f; //intialise the attack timer to something high so it attacks the player on first contact
 	current_velocity = { 0,0 };
+	state = PATHING;
 }
 
 void Enemy::setPosition(float x, float y) { //sets the enemies position
@@ -30,30 +32,52 @@ void Enemy::draw(aie::Renderer2D* renderer)
 	float y = (animationFrame / (int)frameX) / frameY;
 	renderer->setUVRect(x, y, 1/frameX, 1/frameY);
 	renderer->drawSprite(Texture.get(), position.x, position.y, sizeX, sizeY, rotationAngle - glm::radians(90.f));
-	for (Node* n : path) {
-		n->Draw(renderer);
-	}
 }
-void Enemy::update(float deltaTime, Map& map, glm::vec2 playerPosition) {
+void Enemy::update(float deltaTime, Map& map, Player& player) {
 	
-	pathTimer += deltaTime;
-	if (pathTimer >= 1.f) {
-		QueryPath(map, playerPosition);
-		pathTimer = 0.0f;
+	if (state == PATHING) {
+		pathTimer += deltaTime;
+		if (pathTimer >= 1.f) {
+			QueryPath(map, player.getPosition());
+			pathTimer = 0.0f;
+		}
+
+
+		DirectionToNode();
+		DirectionToPlayer(player.getPosition());
+		CalculateRotation();
+		CalculateVelocity(deltaTime);
+		Walk(deltaTime);
 	}
-	DirectionToNode();
-	DirectionToPlayer(playerPosition);
-	CalculateRotation();
-	CalculateVelocity(deltaTime);
-	Walk(deltaTime);
+	if (state == ATTACKING) {
+		Attack(player, deltaTime);
+	}
+	
+	if (CheckDistanceFromPlayer(player.getPosition()) == true) {
+		state = ATTACKING;
+	}
+	else {
+		state = PATHING;
+	}
+
 	timer += deltaTime;
 	AdjustAnimationFrame();
 }
 
-void Enemy::Attack(std::shared_ptr<Player> player, float deltaTime) {
+bool Enemy::CheckDistanceFromPlayer(glm::vec2 playerPosition) {
+	float distance = glm::distance(playerPosition, position);
+	if (distance < 30.f) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+void Enemy::Attack(Player& player, float deltaTime) {
 	attackTimer += deltaTime; // increase the attack timer 
 	if (attackTimer > attackTime) { //if the attack timer is greater then the attack rate 
-		player->TakeDamage(10); //damage the player 
+		player.TakeDamage(10); //damage the player 
 		attackTimer = 0.0f; // reset the timer
 	}
 }

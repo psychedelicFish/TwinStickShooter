@@ -2,6 +2,7 @@
 #include <Texture.h>
 #include <unordered_map>
 #include <string>
+#include <memory>
 
 
 class TextureManager {

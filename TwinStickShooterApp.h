@@ -53,7 +53,7 @@ protected:
 	
 	//Basic Assest Containers
 	std::shared_ptr<Map> map;
-	std::shared_ptr <Player> player;
+	Player* player;
 	std::shared_ptr <Weapon> m_weapon;
 	std::list<std::shared_ptr<Bullet>> bulletList;
 	std::list <std::shared_ptr<Obstacle>> obstacleList;

@@ -33,6 +33,7 @@ void Monobehaviour:: draw(aie::Renderer2D* renderer) {
 	renderer->drawSprite(Texture.get(), position.x, position.y, sizeX, sizeY);
 }
 glm::vec2 Monobehaviour::getPosition(){ return position; }
+const glm::vec2 Monobehaviour::getPosition() const { return position; }
 float Monobehaviour::getX() { return position.x; }
 float Monobehaviour::getY() { return position.y; }
 float Monobehaviour::getSizeX() { return sizeX; }

@@ -273,19 +273,15 @@ breakEnemyList:
 	float x = 0.f;
 	float y = 0.f;
 	
-	player->Update(deltaTime, x, y);
+	player->Update(deltaTime, *map);
 
 	for (std::shared_ptr<Enemy> enemy : enemyList) {
-		enemy->update(deltaTime, *map, player->getPosition());
+		enemy->update(deltaTime, *map, *player);
 		//std::cout << enemy->getX() << " , " << enemy->getY() << std::endl;
-		if (enemy->collision(player)) {
-			enemy->Attack(player, deltaTime);
-			//std::cout << player->getCurrentHealth() << std::endl;
-			bar->UpdateHealth(player->getCurrentHealth());
-			if (!player->Alive) {
-				GameState = &TwinStickShooterApp::GameOver;
-			}
-		}
+	}
+	bar->UpdateHealth(player->getCurrentHealth());
+	if (!player->Alive) {
+		GameState = &TwinStickShooterApp::GameOver;
 	}
 
 	map->update(deltaTime, player->getPosition());
@@ -326,7 +322,7 @@ void TwinStickShooterApp::StartGame(float deltaTime){
 		gameTimer = 0.f;
 		
 		//Create the player
-		player.reset(new Player());
+		player = new Player();
 		
 		//Create the map
 		map.reset(new Map());

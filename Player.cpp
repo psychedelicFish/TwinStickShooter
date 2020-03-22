@@ -5,6 +5,7 @@
 #include <math.h>
 #include "Weapon.h"
 #include "Enemy.h"
+#include "Map.h"
 #include <glm/glm.hpp>
 
 
@@ -12,7 +13,7 @@
 
 Player::Player() : Monobehaviour({ 720/2, 720/2 },textureManager.GetTexture("./bin/textures/Player_stand.png"), 1, 1, glm::vec2{ 1,1 })
 {
-	speed = 200.0f;
+	speed = 125.0f;
 	velocity = { 0,0 };
 	rotation = 0.0f;
 	weapon.reset(new Weapon(position.x, position.y, rotation));
@@ -29,7 +30,7 @@ Player::~Player()
 	//delete playerTexture;
 }
 
-void Player::Update(float deltaTime, float x, float y)
+void Player::Update(float deltaTime, Map& map)
 {
 	aie::Input* input = aie::Input::getInstance();
 
@@ -59,6 +60,11 @@ void Player::Update(float deltaTime, float x, float y)
 	}
 	position.x += velocity.x * deltaTime;//Update X position
 	position.y += velocity.y * deltaTime;//Update Y position
+
+	if (map.CheckIfPassable(glm::vec2(position)) == false) {
+		position.x -= velocity.x * deltaTime;
+		position.y -= velocity.y * deltaTime;
+	}
 
 	glm::vec2 mousePos = { input->getMouseX(), input->getMouseY()};
 

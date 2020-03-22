@@ -22,7 +22,7 @@ public:
 	Monobehaviour(glm::vec2 pos, int X, int Y, glm::vec2 size); //constructer for when object handles its own texture
 	~Monobehaviour(); // destructer
 	glm::vec2 getPosition(); //return the objects position
-	
+	const glm::vec2 getPosition() const;
 	bool collision(std::shared_ptr<Monobehaviour> other); //handles collision logic
 	virtual void update(float deltaTime); //update more then likely overridden
 	virtual void draw(aie::Renderer2D* renderer); // draw more then likely overriden

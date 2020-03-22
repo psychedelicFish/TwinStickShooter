@@ -91,5 +91,6 @@ public:
 	void update(float deltaTime, glm::vec2 loc);
 	std::list<Node*> QueryPathfinder(glm::vec2 pos1, glm::vec2 pos2);
 	Node* CalculateNode(glm::vec2 pos);
+	bool CheckIfPassable(glm::vec2 position);
 };
 

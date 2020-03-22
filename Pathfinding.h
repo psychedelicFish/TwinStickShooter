@@ -9,29 +9,7 @@
 struct Tile;
 using TileList = std::vector<std::shared_ptr<Tile>>;
 
-struct Edge {
-	class Node* target;
-	float cost;
-};
-
-class Node {
-private:
-	float gscore;
-	Node* parent;
-	glm::vec2 position;
-
-public:
-	Node(glm::vec2 p, float score);
-	
-	std::vector<Edge> connections;
-	void SetGScore(float score);
-	float GetGScore();
-	void SetParent(Node* p);
-	Node* GetParent();
-	void Draw(aie::Renderer2D* r); //for debuging
-	glm::vec2 GetPosition();
-};
-
+class Node;
 struct Tile;
 class Pathfinder {
 private:

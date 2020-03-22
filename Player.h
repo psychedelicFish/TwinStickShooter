@@ -5,7 +5,7 @@
 
 class Enemy;
 class Weapon;
-class Obstacle;
+class Map;
 class Player : public Monobehaviour
 {
 	aie::Renderer2D* m_2dRenderer;
@@ -26,7 +26,7 @@ class Player : public Monobehaviour
 public:
 	Player(); //constructer
 	~Player();//destructer
-	void Update(float deltaTime, float x, float y);
+	void Update(float deltaTime, Map& map);
 	void draw(aie::Renderer2D* renderer);
 	void TakeDamage(int dmg); //allows the player to take damage
 	glm::vec2 spriteSize; //how big the player sprite is 
